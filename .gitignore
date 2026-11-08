@@ -9,7 +9,7 @@ __pycache__/
 .pytest_cache/
 
 # fk_eval sonuclari (rapora eklemek istersen ayri bir klasore kopyala)
-aslikol_results/
+ra4_results/
 
 # editor
 .vscode/

@@ -1,0 +1,37 @@
+# RA4 - robot geometrisi ve eklem limitleri
+# Birimler: metre, kilogram, radyan, N*m, rad/s
+#
+# Bu dosya TEK KAYNAKTIR: URDF/Xacro modeli (urdf/ra4.urdf.xacro) ve
+# Python kinematik kodu (ra4_control/kinematics.py) olculeri buradan okur.
+# Bir olcuyu degistirirsen model ve hesaplar birlikte guncellenir.
+
+base:            # sabit taban (dunyaya sabitlenir)
+  radius: 0.10
+  height: 0.08   # h0: zemin -> joint1 ekseni
+  mass: 3.0
+
+turret:          # joint1 (taban donusu, z ekseni) ile donen govde
+  radius: 0.065
+  height: 0.17   # h1: joint1 -> joint2 (omuz)
+  mass: 1.2
+
+upper_arm:       # joint2 (omuz, y ekseni) ile donen ust kol
+  length: 0.32   # l2: joint2 -> joint3 (dirsek)
+  width: 0.06
+  mass: 0.9
+
+forearm:         # joint3 (dirsek, y ekseni) ile donen on kol
+  length: 0.26   # l3: joint3 -> joint4 (bilek)
+  width: 0.05
+  mass: 0.6
+
+wrist:           # joint4 (bilek, y ekseni) ile donen bilek + uc
+  length: 0.11   # l4: joint4 -> uc efektor (tool0)
+  width: 0.045
+  mass: 0.3
+
+joints:          # aktif eklem limitleri
+  joint1: {lower: -3.05, upper: 3.05, effort: 40.0, velocity: 1.5}
+  joint2: {lower: -1.70, upper: 1.70, effort: 60.0, velocity: 1.2}
+  joint3: {lower: -2.30, upper: 2.30, effort: 40.0, velocity: 1.5}
+  joint4: {lower: -2.00, upper: 2.00, effort: 15.0, velocity: 2.0}

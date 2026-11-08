@@ -1,4 +1,4 @@
-# aslikol — 4 Serbestlik Dereceli Robot Kol (ROS 2 Lyrical + Gazebo Jetty)
+# RA4 — 4 Serbestlik Dereceli Robot Kol (ROS 2 Lyrical + Gazebo Jetty)
 
 BLMU7619 Robot Teknolojileri vize projesi. Kendi tasarımım olan 4-DoF eklemli robot kolun
 URDF/Xacro modeli, Gazebo simülasyonu, ros2_control ile eklem kontrolü, düz kinematik hata
@@ -15,7 +15,7 @@ analizi, hareket dizisi ve sensör görselleştirmesi.
 
 ### Linkler ve eklemler
 
-Tüm ölçüler tek bir dosyadan okunur: [`aslikol_description/config/geometry.yaml`](src/aslikol_description/config/geometry.yaml).
+Tüm ölçüler tek bir dosyadan okunur: [`ra4_description/config/geometry.yaml`](src/ra4_description/config/geometry.yaml).
 URDF modeli ve Python kinematik kodu aynı dosyayı kullandığı için ikisi her zaman tutarlıdır.
 
 | Frame | Link | Eklem (parent → child) | Eklem ekseni | Öteleme (parent frame'inde) | Limit [rad] |
@@ -61,22 +61,22 @@ karşılaştırıldı; en büyük fark 3·10⁻¹⁶ (kayan nokta hassasiyeti).
 Herhangi bir konfigürasyonun ara matrislerini yazdırmak için:
 
 ```bash
-ros2 run aslikol_control fk_calc 0.5 0.4 0.6 0.3
+ros2 run ra4_control fk_calc 0.5 0.4 0.6 0.3
 ```
 
 ## 2. Paketler
 
 | Paket | Tür | İçerik |
 |---|---|---|
-| `aslikol_description` | ament_cmake | Xacro modeli, `geometry.yaml`, RViz yapılandırması, `display.launch.py` |
-| `aslikol_bringup` | ament_cmake | Gazebo dünyası, `sim.launch.py`, ros_gz köprüsü ve ros2_control kontrolcü ayarları |
-| `aslikol_control` | ament_python | Kinematik kütüphanesi ve node'lar (aşağıda), birim testleri |
+| `ra4_description` | ament_cmake | Xacro modeli, `geometry.yaml`, RViz yapılandırması, `display.launch.py` |
+| `ra4_bringup` | ament_cmake | Gazebo dünyası, `sim.launch.py`, ros_gz köprüsü ve ros2_control kontrolcü ayarları |
+| `ra4_control` | ament_python | Kinematik kütüphanesi ve node'lar (aşağıda), birim testleri |
 
-`aslikol_control` node'ları:
+`ra4_control` node'ları:
 
 | Komut | Görev |
 |---|---|
-| `ee_pose_publisher` | Uç efektörün tabana göre konumunu yayınlar: `/aslikol/ee_pose` (Gazebo fizik motorundan), `/aslikol/ee_pose_fk` (ölçülen açılardan FK) |
+| `ee_pose_publisher` | Uç efektörün tabana göre konumunu yayınlar: `/ra4/ee_pose` (Gazebo fizik motorundan), `/ra4/ee_pose_fk` (ölçülen açılardan FK) |
 | `fk_eval` | 10 konfigürasyonda FK ile Gazebo konumunu karşılaştırır; Öklid hatası, ortalama ve std, CSV çıktısı |
 | `sequence` | Başlangıç → A → B → C → başlangıç hareket dizisi (FollowJointTrajectory action) |
 | `visualizer` | Eklem açıları, IMU açısal hızı, uç efektör konumu grafikleri ve kamera görüntüsü |
@@ -87,16 +87,16 @@ ros2 run aslikol_control fk_calc 0.5 0.4 0.6 0.3
 | İsim | Tip | Açıklama |
 |---|---|---|
 | `/joint_states` | `sensor_msgs/JointState` | Eklem açıları [rad] ve hızları |
-| `/aslikol/ee_pose` | `geometry_msgs/PoseStamped` | Uç efektör, `base_link`'e göre (Gazebo) |
-| `/aslikol/imu` | `sensor_msgs/Imu` | Bilek IMU |
-| `/aslikol/camera/image` | `sensor_msgs/Image` | Bilek kamerası, rgb8 320×240 |
+| `/ra4/ee_pose` | `geometry_msgs/PoseStamped` | Uç efektör, `base_link`'e göre (Gazebo) |
+| `/ra4/imu` | `sensor_msgs/Imu` | Bilek IMU |
+| `/ra4/camera/image` | `sensor_msgs/Image` | Bilek kamerası, rgb8 320×240 |
 | `/arm_controller/joint_trajectory` | `trajectory_msgs/JointTrajectory` | Eklem hedefi (topic), radyan |
 | `/arm_controller/follow_joint_trajectory` | `control_msgs/action/FollowJointTrajectory` | Eklem hedefi (action), radyan |
 
 ## 3. Kurulum
 
 ```bash
-mkdir -p ~/aslikol_ws && cd ~/aslikol_ws
+mkdir -p ~/ra4_ws && cd ~/ra4_ws
 # depoyu klonla ya da arşivi aç (src/ klasörü bu dizinde olmalı)
 rosdep install --from-paths src --ignore-src -y
 colcon build --symlink-install
@@ -110,10 +110,10 @@ render ile çalıştırılır (`~/.bashrc` içinde `export LIBGL_ALWAYS_SOFTWARE
 
 ```bash
 # Modeli RViz'de incele (kaydırıcılarla eklemleri oynat)
-ros2 launch aslikol_description display.launch.py
+ros2 launch ra4_description display.launch.py
 
 # Simülasyon (Gazebo + kontrolcüler + köprü + uç efektör yayını)
-ros2 launch aslikol_bringup sim.launch.py            # RViz için: rviz:=true
+ros2 launch ra4_bringup sim.launch.py            # RViz için: rviz:=true
 ```
 
 Simülasyon açıkken, ayrı terminallerde:
@@ -131,24 +131,24 @@ ros2 action send_goal /arm_controller/follow_joint_trajectory control_msgs/actio
   "{trajectory: {joint_names: [joint1, joint2, joint3, joint4], points: [{positions: [0.0, 0.0, 0.0, 0.0], time_from_start: {sec: 3}}]}}"
 
 # Sensörleri oku
-ros2 topic echo /aslikol/ee_pose --once
-ros2 topic hz /aslikol/imu
-ros2 topic hz /aslikol/camera/image
+ros2 topic echo /ra4/ee_pose --once
+ros2 topic hz /ra4/imu
+ros2 topic hz /ra4/camera/image
 
-# Hata analizi (sonuçlar ~/aslikol_results/ altına CSV olarak yazılır)
-ros2 run aslikol_control fk_eval
+# Hata analizi (sonuçlar ~/ra4_results/ altına CSV olarak yazılır)
+ros2 run ra4_control fk_eval
 
 # Hareket dizisi + görselleştirme (iki ayrı terminal)
-ros2 run aslikol_control visualizer
-ros2 run aslikol_control sequence
+ros2 run ra4_control visualizer
+ros2 run ra4_control sequence
 ```
 
-Birim testleri: `colcon test --packages-select aslikol_control && colcon test-result --verbose`
+Birim testleri: `colcon test --packages-select ra4_control && colcon test-result --verbose`
 
 ## 5. Tasarım kararları
 
 - **Uç efektörün "ölçülen" konumu Gazebo fizik motorundan alınır** (`PosePublisher` sistemi →
-  `/aslikol/gz_link_poses` → `ee_pose_publisher`). TF ağacı da aynı URDF'ten aynı formülle
+  `/ra4/gz_link_poses` → `ee_pose_publisher`). TF ağacı da aynı URDF'ten aynı formülle
   hesaplandığı için ona göre hata her zaman ~0 çıkardı. Fizik motorundan okunan konum kontrolcünün
   takip hatasını da içerir. `fk_eval` iki hatayı ayrı raporlar:
   - komut edilen açılarla FK – Gazebo (ana metrik)
