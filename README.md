@@ -31,7 +31,7 @@ URDF modeli ve Python kinematik kodu aynı dosyayı kullandığı için ikisi he
 - `joint2`, `joint3`, `joint4` eksenleri paraleldir → **∥ ∥**
 - q = 0 iken kol dik yukarı bakar; uç efektör (0, 0, 0.94) m'dedir. Erişim yarıçapı 0.69 m.
 - Kamera `wrist_link` üzerinde, uç efektör yönüne (+z) bakar (`camera_link`).
-
+![RA4 Gazebo'da hareket dizisi](ra4_demo.gif)
 ### Düz kinematik
 
 Her frame bir öncekine göre z boyunca ötelenir, ardından kendi eklem ekseni etrafında döner:
