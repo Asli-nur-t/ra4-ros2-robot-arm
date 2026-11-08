@@ -1,0 +1,17 @@
+# colcon ciktilari
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# fk_eval sonuclari (rapora eklemek istersen ayri bir klasore kopyala)
+aslikol_results/
+
+# editor
+.vscode/
+.idea/
+*.swp

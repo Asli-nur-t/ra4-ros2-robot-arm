@@ -1,0 +1,31 @@
+# ros2_control kontrolculeri (gz_ros2_control tarafindan yuklenir)
+controller_manager:
+  ros__parameters:
+    update_rate: 100  # Hz
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+# Eklem hedefleri radyan cinsindendir (tum eklemler doner).
+# Komut yollari:
+#   action: /arm_controller/follow_joint_trajectory  (control_msgs/action/FollowJointTrajectory)
+#   topic : /arm_controller/joint_trajectory         (trajectory_msgs/msg/JointTrajectory)
+arm_controller:
+  ros__parameters:
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    allow_partial_joints_goal: false
+    constraints:
+      stopped_velocity_tolerance: 0.02
+      goal_time: 0.0
